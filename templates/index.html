@@ -15,8 +15,8 @@
             <h1 class="logo">✦ Expense</h1>
             <nav>
                 <a href="#" class="active">Dashboard</a>
-                <a href="#">Transactions</a>
-                <a href="#">AI Insights</a>
+                <a href="#transactions">Transactions</a>
+                <a href="#ai-insights">AI Insights</a>
                 <br>
                 <a href="/download-excel" target="_blank" class="btn-secondary" style="text-align:center; margin-top:2rem;">📁 Get Excel Sheet</a>
             </nav>
@@ -24,7 +24,7 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <header>
+            <header id="ai-insights">
                 <h2>Welcome Back!</h2>
                 <div class="ai-suggestion-box">
                     <p id="ai-text">Loading AI Suggestions...</p>
@@ -73,7 +73,7 @@
             </div>
 
             <!-- Recent Expenses Table -->
-            <div class="card glass full-width">
+            <div class="card glass full-width" id="transactions">
                 <h3>Recent Activity & Data</h3>
                 <div class="table-container">
                     <table>

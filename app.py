@@ -10,7 +10,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 EXCEL_FILE = 'expenses.xlsx'
 CATEGORIES = ['Travel', 'Petrol', 'Food', 'Groceries', 'Utilities', 'Shopping', 'Other']
-COLUMNS = ['Date'] + CATEGORIES + ['Total']
+COLUMNS = ['Sl No.'] + CATEGORIES + ['Total']
 
 def read_from_excel():
     if not os.path.exists(EXCEL_FILE): return {}
@@ -20,22 +20,43 @@ def read_from_excel():
     data = {}
     header_found = False
     col_map = {}
+    current_month_str = None
     
     for row_cells in ws.iter_rows(values_only=True):
         if not header_found:
-            if row_cells and row_cells[0] == 'Date':
+            if row_cells and (row_cells[0] == 'Date' or row_cells[0] == 'Sl No.'):
                 header_found = True
                 col_map = {col: i for i, col in enumerate(row_cells) if col}
             continue
             
-        if not row_cells or not row_cells[0]: continue
-        date_val = str(row_cells[0]).strip()
+        if not row_cells or row_cells[0] is None or str(row_cells[0]).strip() == "": continue
         
+        cell_val = str(row_cells[0]).strip()
+        
+        # Check if it's a month header (e.g., April 2026)
         try:
-            d = datetime.strptime(date_val, "%Y-%m-%d")
+            d_month = datetime.strptime(cell_val, "%B %Y")
+            current_month_str = d_month.strftime("%Y-%m")
+            continue
+        except ValueError:
+            pass
+            
+        # Parse day / date
+        date_val = None
+        try:
+            if "-" in cell_val and len(cell_val) >= 10:
+                d = datetime.strptime(cell_val[:10], "%Y-%m-%d")
+                date_val = d.strftime("%Y-%m-%d")
+                current_month_str = d.strftime("%Y-%m")
+            elif current_month_str:
+                day_num = int(float(cell_val))
+                date_val = f"{current_month_str}-{day_num:02d}"
+                datetime.strptime(date_val, "%Y-%m-%d") # Validate
         except ValueError:
             continue
             
+        if not date_val: continue
+        
         if date_val not in data:
             data[date_val] = {cat: 0.0 for cat in CATEGORIES}
             
@@ -73,7 +94,8 @@ def write_to_excel(data):
             ws.cell(row=ws.max_row, column=1).font = Font(bold=True, size=14, color="0000FF")
             current_month = month_label
             
-        row = [date_val]
+        # Use Day number for Sl No.
+        row = [int(d.strftime("%d"))]
         total = 0.0
         for cat in CATEGORIES:
             amt = data[date_val].get(cat, 0.0)
@@ -116,7 +138,6 @@ def handle_expenses():
     else:
         # GET expenses
         data = read_from_excel()
-        # format list
         results = []
         for d_key, cats in data.items():
             entry = {'Date': d_key}
@@ -136,7 +157,6 @@ def ai_suggestion():
         if not data:
             return jsonify({'suggestion': "Start adding expenses to get AI-powered savings suggestions!"})
         
-        # Calculate totals
         cat_totals = {cat: 0.0 for cat in CATEGORIES}
         total_spent = 0.0
         
