@@ -8,7 +8,7 @@ from openpyxl.styles import Font
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-EXCEL_FILE = 'expenses.xlsx'
+EXCEL_FILE = 'ExpensesBack.xlsx'
 CATEGORIES = ['Travel', 'Petrol', 'Food', 'Groceries', 'Utilities', 'Shopping', 'Other']
 COLUMNS = ['Date'] + CATEGORIES + ['Total']
 
@@ -215,4 +215,4 @@ def chat():
     return jsonify({"reply": reply})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    app.run(host='0.0.0.0', debug=True, port=8080)
