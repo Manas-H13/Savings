@@ -15,20 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = document.getElementById('date').value;
         const amount = document.getElementById('amount').value;
         const category = document.getElementById('category').value;
-        const remarks = document.getElementById('remarks').value;
 
         const res = await fetch('/api/expenses', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ date, amount, category, remarks })
+            body: JSON.stringify({ date, amount, category })
         });
 
         if (res.ok) {
             // Reset fields
             document.getElementById('amount').value = '';
-            document.getElementById('remarks').value = '';
             
             // Refresh
             fetchData();
@@ -65,9 +63,14 @@ function updateTable() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${row.Date}</td>
-            <td>${row.Category}</td>
-            <td>${row.Remarks || '-'}</td>
-            <td><strong>$${parseFloat(row.Amount).toFixed(2)}</strong></td>
+            <td>$${(row.Travel || 0).toFixed(2)}</td>
+            <td>$${(row.Petrol || 0).toFixed(2)}</td>
+            <td>$${(row.Food || 0).toFixed(2)}</td>
+            <td>$${(row.Groceries || 0).toFixed(2)}</td>
+            <td>$${(row.Utilities || 0).toFixed(2)}</td>
+            <td>$${(row.Shopping || 0).toFixed(2)}</td>
+            <td>$${(row.Other || 0).toFixed(2)}</td>
+            <td><strong>$${(row.Total || 0).toFixed(2)}</strong></td>
         `;
         tbody.appendChild(tr);
     });
@@ -103,7 +106,7 @@ function updateChart(viewMode) {
         
         if (key) {
             if (!groupedObj[key]) groupedObj[key] = 0;
-            groupedObj[key] += parseFloat(item.Amount || 0);
+            groupedObj[key] += parseFloat(item.Total || 0);
         }
     });
 
