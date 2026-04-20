@@ -79,9 +79,10 @@ def write_to_excel(data):
     sorted_dates = sorted(data.keys())
     current_month = None
     
-    ws.append(COLUMNS)
-    for cell in ws[1]:
-        cell.font = Font(bold=True)
+    if not sorted_dates:
+        ws.append(COLUMNS)
+        for cell in ws[1]:
+            cell.font = Font(bold=True)
     
     for date_val in sorted_dates:
         d = datetime.strptime(date_val, "%Y-%m-%d")
@@ -92,6 +93,11 @@ def write_to_excel(data):
                 ws.append([]) # space
             ws.append([month_label])
             ws.cell(row=ws.max_row, column=1).font = Font(bold=True, size=14, color="0000FF")
+            
+            ws.append(COLUMNS)
+            for cell in ws[ws.max_row]:
+                cell.font = Font(bold=True)
+                
             current_month = month_label
             
         # Use Day number for Sl No.
