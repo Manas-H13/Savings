@@ -123,10 +123,10 @@ function updateChart(viewMode) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Expenses',
+                label: 'Total Expenses',
                 data: dataValues,
-                backgroundColor: 'rgba(102, 252, 241, 0.7)',
-                borderColor: '#66fcf1',
+                backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                borderColor: '#0056b3',
                 borderWidth: 1,
                 borderRadius: 4
             }]
@@ -134,16 +134,23 @@ function updateChart(viewMode) {
         options: {
             responsive: true,
             plugins: {
-                legend: { labels: { color: '#c5c6c7' } }
+                legend: { labels: { color: '#111' } },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` Total for this ${viewMode}: $${context.parsed.y.toFixed(2)}`;
+                        }
+                    }
+                }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { color: '#c5c6c7' },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
+                    ticks: { color: '#111' },
+                    grid: { color: 'rgba(0,0,0,0.1)' }
                 },
                 x: {
-                    ticks: { color: '#c5c6c7' },
+                    ticks: { color: '#111' },
                     grid: { display: false }
                 }
             }
