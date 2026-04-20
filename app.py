@@ -10,7 +10,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 EXCEL_FILE = 'expenses.xlsx'
 CATEGORIES = ['Travel', 'Petrol', 'Food', 'Groceries', 'Utilities', 'Shopping', 'Other']
-COLUMNS = ['Sl No.'] + CATEGORIES + ['Total']
+COLUMNS = ['Date'] + CATEGORIES + ['Total']
 
 def read_from_excel():
     if not os.path.exists(EXCEL_FILE): return {}
