@@ -76,14 +76,14 @@ function updateTable() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${row.Date}</td>
-            <td>$${(row.Travel || 0).toFixed(2)}</td>
-            <td>$${(row.Petrol || 0).toFixed(2)}</td>
-            <td>$${(row.Food || 0).toFixed(2)}</td>
-            <td>$${(row.Groceries || 0).toFixed(2)}</td>
-            <td>$${(row.Utilities || 0).toFixed(2)}</td>
-            <td>$${(row.Shopping || 0).toFixed(2)}</td>
-            <td>$${(row.Other || 0).toFixed(2)}</td>
-            <td><strong>$${(row.Total || 0).toFixed(2)}</strong></td>
+            <td>₹${(row.Travel || 0).toFixed(2)}</td>
+            <td>₹${(row.Petrol || 0).toFixed(2)}</td>
+            <td>₹${(row.Food || 0).toFixed(2)}</td>
+            <td>₹${(row.Groceries || 0).toFixed(2)}</td>
+            <td>₹${(row.Utilities || 0).toFixed(2)}</td>
+            <td>₹${(row.Shopping || 0).toFixed(2)}</td>
+            <td>₹${(row.Other || 0).toFixed(2)}</td>
+            <td><strong>₹${(row.Total || 0).toFixed(2)}</strong></td>
         `;
         tbody.appendChild(tr);
     });
@@ -156,7 +156,7 @@ function updateChart(viewMode) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return ` Total for this ${viewMode}: $${context.parsed.y.toFixed(2)}`;
+                            return ` Total for this ${viewMode}: ₹${context.parsed.y.toFixed(2)}`;
                         }
                     }
                 }

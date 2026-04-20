@@ -170,21 +170,21 @@ def chat():
     # 1. Full Details / Expenses
     if any(word in user_msg for word in ["expense", "detail", "summary", "breakdown", "full", "report"]):
         if total_spent == 0:
-            reply = "You currently have $0 logged! Add some transactions to get a full report."
+            reply = "You currently have ₹0 logged! Add some transactions to get a full report."
         else:
-            breakdown_list = [f"{c}: ${a:.2f}" for c, a in cat_totals.items() if a > 0]
+            breakdown_list = [f"{c}: ₹{a:.2f}" for c, a in cat_totals.items() if a > 0]
             breakdown_text = ", ".join(breakdown_list)
-            reply = f"Here is your full financial breakdown: {breakdown_text}. Your absolute total spent globally is ${total_spent:.2f}. "
+            reply = f"Here is your full financial breakdown: {breakdown_text}. Your absolute total spent globally is ₹{total_spent:.2f}. "
             if top_amt > 0:
-                reply += f"Remember, {top_cat} makes up the bulk of this at ${top_amt:.2f}."
+                reply += f"Remember, {top_cat} makes up the bulk of this at ₹{top_amt:.2f}."
                 
     # 2. Estimation
     elif "estimate" in user_msg or "amount" in user_msg or "if saved" in user_msg:
         potential = total_spent * 0.20
         if total_spent > 0:
-            reply = f"Based on your current logged expenses, if you cut back 20%, I estimate you can save around ${potential:.2f}! To achieve this, automate a ${potential:.2f} transfer to your secure savings instantly after earning."
+            reply = f"Based on your current logged expenses, if you cut back 20%, I estimate you can save around ₹{potential:.2f}! To achieve this, automate a ₹{potential:.2f} transfer to your secure savings instantly after earning."
         else:
-            reply = "I estimate $0 right now! Log some data so I can give you an accurate estimation."
+            reply = "I estimate ₹0 right now! Log some data so I can give you an accurate estimation."
             
     # 3. Achieve Goals
     elif "achieve" in user_msg or "goal" in user_msg:
@@ -195,7 +195,7 @@ def chat():
         if total_spent == 0:
             reply = "You haven't spent anything yet! Keep tracking to unlock deep insights."
         else:
-            reply = f"The fastest way for you to save right now is by putting a hard cap on {top_cat}. You've spent ${top_amt:.2f} there! Think carefully before buying more in {top_cat}."
+            reply = f"The fastest way for you to save right now is by putting a hard cap on {top_cat}. You've spent ₹{top_amt:.2f} there! Think carefully before buying more in {top_cat}."
             
     # 5. General Conversation
     elif any(word in user_msg for word in ["hi", "hello", "hey"]):
