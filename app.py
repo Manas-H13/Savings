@@ -23,12 +23,6 @@ def read_from_excel():
     current_month_str = None
     
     for row_cells in ws.iter_rows(values_only=True):
-        if not header_found:
-            if row_cells and (row_cells[0] == 'Date' or row_cells[0] == 'Sl No.'):
-                header_found = True
-                col_map = {col: i for i, col in enumerate(row_cells) if col}
-            continue
-            
         if not row_cells or row_cells[0] is None or str(row_cells[0]).strip() == "": continue
         
         cell_val = str(row_cells[0]).strip()
@@ -40,6 +34,11 @@ def read_from_excel():
             continue
         except ValueError:
             pass
+            
+        # Is it a Column Header?
+        if cell_val in ('Date', 'Sl No.'):
+            col_map = {col: i for i, col in enumerate(row_cells) if col}
+            continue
             
         # Parse day / date
         date_val = None
