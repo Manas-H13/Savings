@@ -26,8 +26,17 @@
         <main class="main-content">
             <header id="ai-insights">
                 <h2>Welcome Back!</h2>
-                <div class="ai-suggestion-box">
-                    <p id="ai-text">Loading AI Suggestions...</p>
+                <div class="chatbot-container glass">
+                    <div class="chat-header">
+                        <h4>🤖 Chat with Hai</h4>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message hai-msg">Hi! I'm Hai, your personal AI savings advisor. Ask me how to save, estimate your future savings, or ways to achieve your goals!</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Ask Hai something..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                        <button onclick="sendChatMessage()">Send</button>
+                    </div>
                 </div>
             </header>
 

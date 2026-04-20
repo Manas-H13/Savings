@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('date').valueAsDate = new Date();
     
     fetchData();
-    fetchAI();
 
     // Form Submits
     document.getElementById('expense-form').addEventListener('submit', async (e) => {
@@ -30,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Refresh
             fetchData();
-            fetchAI();
         }
     });
 });
@@ -44,11 +42,26 @@ async function fetchData() {
     }
 }
 
-async function fetchAI() {
-    const res = await fetch('/api/ai-suggestion');
-    if (res.ok) {
+async function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const msg = input.value.trim();
+    if(!msg) return;
+    
+    const messages = document.getElementById('chat-messages');
+    messages.innerHTML += `<div class="message user-msg">${msg}</div>`;
+    input.value = '';
+    messages.scrollTop = messages.scrollHeight;
+    
+    const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: msg})
+    });
+    
+    if(res.ok) {
         const data = await res.json();
-        document.getElementById('ai-text').innerText = data.suggestion;
+        messages.innerHTML += `<div class="message hai-msg">${data.reply}</div>`;
+        messages.scrollTop = messages.scrollHeight;
     }
 }
 

@@ -150,36 +150,43 @@ def handle_expenses():
             
         return jsonify(results)
 
-@app.route('/api/ai-suggestion', methods=['GET'])
-def ai_suggestion():
-    try:
-        data = read_from_excel()
-        if not data:
-            return jsonify({'suggestion': "Start adding expenses to get AI-powered savings suggestions!"})
-        
-        cat_totals = {cat: 0.0 for cat in CATEGORIES}
-        total_spent = 0.0
-        
-        for cats in data.values():
-            for c, a in cats.items():
-                cat_totals[c] += a
-                total_spent += a
-                
-        top_cat = max(cat_totals, key=cat_totals.get)
-        if total_spent == 0:
-            return jsonify({'suggestion': "Add an amount greater than 0 to get tips!"})
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    user_msg = request.json.get('message', '').lower()
+    data = read_from_excel()
+    
+    cat_totals = {cat: 0.0 for cat in CATEGORIES}
+    total_spent = 0.0
+    for cats in data.values():
+        for c, a in cats.items():
+            cat_totals[c] += a
+            total_spent += a
             
-        tips = [
-            f"💡 Your highest expense is {top_cat}. Consider setting limits to improve savings.",
-            f"💡 You have logged a total of ${total_spent:.2f}. Keep tracking!",
-            f"💡 A simple rule: try to save 20% of your total income. Cutting {top_cat} helps.",
-            f"💡 Have you considered a 'no-spend' day this week? It builds great habits."
-        ]
+    top_cat = max(cat_totals, key=cat_totals.get) if total_spent > 0 else "None"
+    top_amt = cat_totals.get(top_cat, 0)
+    
+    reply = ""
+    
+    if "estimate" in user_msg or "amount" in user_msg or "if saved" in user_msg:
+        potential = total_spent * 0.20
+        if total_spent > 0:
+            reply = f"Based on your current logged expenses, if you cut back 20%, I estimate you can save around ${potential:.2f}! To achieve this, automate a ${potential:.2f} transfer to your secure savings instantly after earning."
+        else:
+            reply = "I estimate $0 right now! Log some data so I can give you an accurate estimation."
+            
+    elif "achieve" in user_msg or "goal" in user_msg:
+        reply = "To achieve your numbers, follow the 50/30/20 rule: 50% for Needs, 30% for Wants, and 20% into Savings. Review your transactions tab daily to stay strictly within limits!"
         
-        suggestion = " ".join(random.sample(tips, 2))
-        return jsonify({'suggestion': suggestion})
-    except Exception as e:
-        return jsonify({'suggestion': f"AI is thinking... Start logging data!"})
+    elif "save" in user_msg or "how" in user_msg:
+        if total_spent == 0:
+            reply = "You haven't spent anything yet! Keep tracking to unlock deep insights."
+        else:
+            reply = f"The fastest way for you to save right now is by putting a hard cap on {top_cat}. You've spent ${top_amt:.2f} there! Think carefully before buying more in {top_cat}."
+            
+    else:
+        reply = "I'm Hai! Try asking me: 'How can I save?', 'What is my estimated savings amount?', or 'How can I achieve my goals?'"
+        
+    return jsonify({"reply": reply})
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
