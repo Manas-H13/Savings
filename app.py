@@ -167,24 +167,45 @@ def chat():
     
     reply = ""
     
-    if "estimate" in user_msg or "amount" in user_msg or "if saved" in user_msg:
+    # 1. Full Details / Expenses
+    if any(word in user_msg for word in ["expense", "detail", "summary", "breakdown", "full", "report"]):
+        if total_spent == 0:
+            reply = "You currently have $0 logged! Add some transactions to get a full report."
+        else:
+            breakdown_list = [f"{c}: ${a:.2f}" for c, a in cat_totals.items() if a > 0]
+            breakdown_text = ", ".join(breakdown_list)
+            reply = f"Here is your full financial breakdown: {breakdown_text}. Your absolute total spent globally is ${total_spent:.2f}. "
+            if top_amt > 0:
+                reply += f"Remember, {top_cat} makes up the bulk of this at ${top_amt:.2f}."
+                
+    # 2. Estimation
+    elif "estimate" in user_msg or "amount" in user_msg or "if saved" in user_msg:
         potential = total_spent * 0.20
         if total_spent > 0:
             reply = f"Based on your current logged expenses, if you cut back 20%, I estimate you can save around ${potential:.2f}! To achieve this, automate a ${potential:.2f} transfer to your secure savings instantly after earning."
         else:
             reply = "I estimate $0 right now! Log some data so I can give you an accurate estimation."
             
+    # 3. Achieve Goals
     elif "achieve" in user_msg or "goal" in user_msg:
         reply = "To achieve your numbers, follow the 50/30/20 rule: 50% for Needs, 30% for Wants, and 20% into Savings. Review your transactions tab daily to stay strictly within limits!"
         
+    # 4. Savings Logic
     elif "save" in user_msg or "how" in user_msg:
         if total_spent == 0:
             reply = "You haven't spent anything yet! Keep tracking to unlock deep insights."
         else:
             reply = f"The fastest way for you to save right now is by putting a hard cap on {top_cat}. You've spent ${top_amt:.2f} there! Think carefully before buying more in {top_cat}."
             
+    # 5. General Conversation
+    elif any(word in user_msg for word in ["hi", "hello", "hey"]):
+        reply = "Hello! I am Hai, your personal AI savings advisor. How can I help you manage your finances today?"
+    elif any(word in user_msg for word in ["who", "what are you", "can you"]):
+        reply = "I am Hai! I analyze your native Excel data to provide tailored savings strategies, estimate your targets accurately, and generate full analytical breakdowns of your spending line-by-line."
+    elif "thank" in user_msg:
+        reply = "You're very welcome! Let's hit those financial goals together!"
     else:
-        reply = "I'm Hai! Try asking me: 'How can I save?', 'What is my estimated savings amount?', or 'How can I achieve my goals?'"
+        reply = "I'm Hai! Try asking me for 'full expense details', 'How can I save?', 'estimated savings', or just say Hello!"
         
     return jsonify({"reply": reply})
 
