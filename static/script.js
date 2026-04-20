@@ -125,10 +125,12 @@ function updateChart(viewMode) {
             datasets: [{
                 label: 'Total Expenses',
                 data: dataValues,
-                backgroundColor: 'rgba(0, 123, 255, 0.7)',
-                borderColor: '#0056b3',
+                backgroundColor: 'rgba(173, 216, 230, 0.8)',
+                borderColor: '#87CEEB',
                 borderWidth: 1,
-                borderRadius: 4
+                borderRadius: 0,
+                barPercentage: 1.0,
+                categoryPercentage: 1.0
             }]
         },
         options: {

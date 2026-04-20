@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import pandas as pd
 import os
+import random
 from datetime import datetime
 
 app = Flask(__name__)
@@ -16,6 +17,10 @@ def init_excel():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/download-excel')
+def download_excel():
+    return send_file(EXCEL_FILE, as_attachment=True)
 
 @app.route('/api/expenses', methods=['GET', 'POST'])
 def handle_expenses():
@@ -53,8 +58,16 @@ def ai_suggestion():
             return jsonify({'suggestion': "Start adding expenses to get AI-powered savings suggestions!"})
         
         top_cat = df.groupby('Category')['Amount'].sum().idxmax()
-        suggestion = f"💡 AI Insight: Your highest expense category is {top_cat}. Consider setting limits on {top_cat} to improve your monthly savings. "
+        total_spent = df['Amount'].sum()
         
+        tips = [
+            f"💡 Your highest expense is {top_cat}. Consider setting limits to improve savings.",
+            f"💡 You have logged a total of ${total_spent:.2f}. Keep tracking!",
+            f"💡 A simple rule: try to save 20% of your total income. Cutting {top_cat} helps.",
+            f"💡 Have you considered a 'no-spend' day this week? It builds great habits."
+        ]
+        
+        suggestion = " ".join(random.sample(tips, 2))
         return jsonify({'suggestion': suggestion})
     except Exception as e:
         return jsonify({'suggestion': f"AI is thinking... Start logging data!"})
